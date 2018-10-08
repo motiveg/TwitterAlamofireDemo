@@ -1,29 +1,25 @@
 //
-//  TweetCell.swift
+//  DetailView.swift
 //  twitter_alamofire_demo
 //
-//  Created by Brian Casipit on 10/1/18.
+//  Created by Brian Casipit on 10/7/18.
 //  Copyright © 2018 Charles Hieger. All rights reserved.
 //
 
 import UIKit
 import AlamofireImage
 
-class TweetCell: UITableViewCell {
+class DetailView: UIView {
     
     @IBOutlet weak var profileImageView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var screenNameLabel: UILabel!
-    @IBOutlet weak var createdAtLabel: UILabel!
     @IBOutlet weak var tweetTextLabel: UILabel!
-    
-    @IBOutlet weak var replyButton: UIButton!
-    @IBOutlet weak var replyCountLabel: UILabel!
-    @IBOutlet weak var retweetButton: UIButton!
+    @IBOutlet weak var createdAtLabel: UILabel!
     @IBOutlet weak var retweetCountLabel: UILabel!
-    @IBOutlet weak var favoriteButton: UIButton!
     @IBOutlet weak var favoriteCountLabel: UILabel!
-    @IBOutlet weak var messageButton: UIButton!
+    @IBOutlet weak var retweetButton: UIButton!
+    @IBOutlet weak var favoriteButton: UIButton!
     
     var tweet: Tweet! {
         willSet(newTweet) {
@@ -31,19 +27,20 @@ class TweetCell: UITableViewCell {
             print("New tweet about to be set.")
             
             // set user information
+            
             if let profileImageURL = newTweet.user?.profileImageURL {
                 print(profileImageURL)
                 profileImageView.af_setImage(withURL: profileImageURL)
             }
             nameLabel.text = newTweet.user?.name
-            screenNameLabel.text = String((newTweet.user?.screenName)!)
+            screenNameLabel.text = String("@" + (newTweet.user?.screenName)!)
             createdAtLabel.text = newTweet.createdAtString
             
             tweetTextLabel.text = newTweet.text
             
             // set reply information
-            replyButton.setImage(UIImage(named: "reply-icon"), for: ControlState.normal)
-            replyCountLabel.text = String(newTweet.retweetCount!)
+            //replyButton.setImage(UIImage(named: "reply-icon"), for: ControlState.normal)
+            //replyCountLabel.text = String(newTweet.retweetCount!)
             
             // set retweet information
             retweetButton.setImage(UIImage(named: "retweet-icon"), for: ControlState.normal)
@@ -56,7 +53,7 @@ class TweetCell: UITableViewCell {
             favoriteCountLabel.text = String(newTweet.favoriteCount!)
             
             // set message icon
-            messageButton.setImage(UIImage(named: "message-icon"), for: ControlState.normal)
+            //messageButton.setImage(UIImage(named: "message-icon"), for: ControlState.normal)
             
         }
     }
@@ -66,12 +63,9 @@ class TweetCell: UITableViewCell {
         
         profileImageView.layer.cornerRadius = profileImageView.frame.size.width / 2
         profileImageView.layer.masksToBounds = true
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+        
+        tweetTextLabel.layer.cornerRadius = 4.0
+        tweetTextLabel.layer.masksToBounds = true
     }
     
     func refreshData() {
@@ -90,9 +84,9 @@ class TweetCell: UITableViewCell {
         tweetTextLabel.text = tweet.text
         
         // set reply information
-        replyCountLabel.text = String(tweet.retweetCount!)
+        //replyCountLabel.text = String(tweet.retweetCount!)
         
-        // set retweet information--
+        // set retweet information
         if tweet.retweeted! {
             retweetButton.isSelected = true
         } else {
@@ -100,7 +94,7 @@ class TweetCell: UITableViewCell {
         }
         retweetCountLabel.text = String(tweet.retweetCount!)
         
-        // set favorite information--
+        // set favorite information
         if tweet.favorited! {
             favoriteButton.isSelected = true
         } else {
@@ -144,7 +138,6 @@ class TweetCell: UITableViewCell {
         }
     }
     
-    
     @IBAction func didTapFavorite(_ sender: Any) {
         // Update the local tweet model
         if !tweet.favorited! {
@@ -179,5 +172,14 @@ class TweetCell: UITableViewCell {
             }
         }
     }
+    
+    
+    /*
+    // Only override draw() if you perform custom drawing.
+    // An empty implementation adversely affects performance during animation.
+    override func draw(_ rect: CGRect) {
+        // Drawing code
+    }
+    */
 
 }

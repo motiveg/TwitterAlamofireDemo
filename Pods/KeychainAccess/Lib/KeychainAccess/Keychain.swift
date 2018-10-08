@@ -784,7 +784,7 @@ public final class Keychain {
         #if swift(>=4.1)
             return allItems.compactMap(filter)
         #else
-            return allItems.compactMap(filter)
+            return allItems.flatMap(filter)
         #endif
     }
 

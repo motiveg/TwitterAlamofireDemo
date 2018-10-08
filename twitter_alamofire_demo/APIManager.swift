@@ -34,7 +34,7 @@ class APIManager: SessionManager {
                 if let error = error {
                     failure(error)
                 } else if let user = user {
-                    print("Welcome \(String(describing: user.name))")
+                    print("Welcome \(user.name ?? "user")")
                     
                     // set User.current, so that it's persisted
                     User.current = user
@@ -186,7 +186,18 @@ class APIManager: SessionManager {
         }
     }
     
-    // MARK: TODO: Compose Tweet
+    // Compose Tweet
+    func composeTweet(with text: String, completion: @escaping (Tweet?, Error?) -> ()) {
+        let urlString = "https://api.twitter.com/1.1/statuses/update.json"
+        let parameters = ["status": text]
+        oauthManager.client.post(urlString, parameters: parameters, headers: nil, body: nil, success: { (response: OAuthSwiftResponse) in
+            let tweetDictionary = try! response.jsonObject() as! [String: Any]
+            let tweet = Tweet(dictionary: tweetDictionary)
+            completion(tweet, nil)
+        }) { (error: OAuthSwiftError) in
+            completion(nil, error.underlyingError)
+        }
+    }
     
     // MARK: TODO: Get User Timeline
     

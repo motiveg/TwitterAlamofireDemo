@@ -9,7 +9,7 @@
 import UIKit
 import PKHUD
 
-class TimelineViewController: UIViewController, UITableViewDataSource {
+class TimelineViewController: UIViewController, UITableViewDataSource, ComposeViewControllerDelegate {
     
     // Check this pod out for clickable links:
     // https://github.com/TTTAttributedLabel/TTTAttributedLabel
@@ -29,10 +29,15 @@ class TimelineViewController: UIViewController, UITableViewDataSource {
         
         refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(TimelineViewController.didPullToRefresh(_:)), for: .valueChanged)
-
+        tableView.insertSubview(refreshControl, at: 0)
+        
         tableView.dataSource = self
         
         self.fetchTimeline()
+    }
+    
+    func did(post: Tweet) {
+        self.navigationController?.popToViewController(self, animated: true)
     }
     
     @objc func didPullToRefresh(_ refreshControl: UIRefreshControl) {
@@ -76,5 +81,19 @@ class TimelineViewController: UIViewController, UITableViewDataSource {
         APIManager.logout()
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "detailSegue" {
+            let tweetCell = sender as! UITableViewCell
+            if let indexPath = self.tableView.indexPath(for: tweetCell) {
+                let tweet = self.tweets[indexPath.row]
+                let detailViewController = segue.destination as! DetailViewController
+                detailViewController.tweet = tweet
+            }
+        }
+        if segue.identifier == "composeSegue" {
+            let composeVC = segue.destination as! ComposeViewController
+            composeVC.delegate = self
+        }
+    }
     
 }
